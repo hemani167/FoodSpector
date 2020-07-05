@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Foodspector</title>
+
+    <style>
+        * {
+            font-size:30px;
+            color:#F0F8FF;
+            /*background-image: url('indianfood.jpg');
+            background-repeat: no-repeat;
+            background-size:100%;*/
+            text-align: center;
+
+        }
+        body{background-image: url('indianfood.jpg');
+            background-repeat: no-repeat;
+            background-size:100% 100%;}
+        img {
+            border: 5px solid #20B2AA;
+            border-radius: 50px;
+            padding: 10px;
+            width: 500px;
+        }
+        button {
+  background-color: #20B2AA; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+div {
+  padding-top: 50px;
+  padding-right: 30px;
+  padding-bottom: 50px;
+  padding-left: 80px;
+}
+
+       
+    </style>
+</head>
+
+<body>    
+   <!--  <div style="background-image: url('back.jpg'); background-repeat: no-repeat;
+  background-size:auto;"> -->
+ <!--  <label class="custom-file-upload">
+    <input type="file"/>
+    Custom Upload
+    </label> -->
+    <h1>NAMASTE!</h1>
+    <h1>WELCOME TO FOODSPECTOR !</h1>
+    <label class="custom-file-upload"> <input id="image-selector"  type="file" size="10" /> Upload Food Image   </label>
+    <button id="predict-button"; style="color:black;">Predict</button>
+    <p style="font-weight:bold">INDIAN FOOD CALORIE PREDICTOR</p>    
+    <p style="font-weight:bold; color:#20B2AA">Predicted-class: <span id="pred"></span></p>
+    <p style="font-weight:bold;color:#20B2AA">Calories per 100 grams: <span id="calories"></span></p>
+    <img id="selected-image" src=""/>
+    
+
+   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+   <script>
+    let base64Image;
+    $("#image-selector").change(function() {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let dataURL = reader.result;
+            $('#selected-image').attr("src", dataURL);
+            base64Image = dataURL.replace("data:image/jpeg;base64,","");
+            console.log(base64Image);
+        }
+        reader.readAsDataURL($("#image-selector")[0].files[0]);
+        $("#prediction").text("");
+        
+    });
+    
+    $("#predict-button").click(function(){
+        let message = {
+            image: base64Image
+        }
+       console.log(message);
+        $.post("http://localhost:5000/mobilenet", JSON.stringify(message), function(response){
+            $("#pred").text(String(response.prediction.pred));
+            $("#calories").text(String(response.prediction.calorie));
+            console.log(response);
+        });
+    });       
+</script>
+</body>
+</html>
+ 
